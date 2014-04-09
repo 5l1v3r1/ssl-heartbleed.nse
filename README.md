@@ -14,7 +14,6 @@ $ nmap --script=./openssl-heartbleed.nse host.tld
 Dumping leaked memory is enabled by increasing Nmap's debug level via -d flag.
 ```
 $ nmap -d --script=./openssl-heartbleed.nse host.tld
-
 ```
 
 ### Example Output
